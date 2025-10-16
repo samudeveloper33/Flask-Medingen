@@ -1,0 +1,54 @@
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Flask
+instance/
+.webassets-cache
+
+# Testing / coverage
+.pytest_cache/
+.tox/
+.nox/
+.coverage*
+htmlcov/
+
+# Packaging / build
+build/
+dist/
+.eggs/
+*.egg-info/
+*.manifest
+*.spec
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+*.env
+*.env.*
+!.env.example
+
+# IDE / Editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Type checkers
+.mypy_cache/
+.pyre/
+.pytype/
