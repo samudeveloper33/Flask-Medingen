@@ -50,7 +50,6 @@ class Product(db.Model):
     # Relationships
     salts = db.relationship('Salt', backref='product', lazy=True, cascade='all, delete-orphan')
     reviews = db.relationship('Review', backref='product', lazy=True, cascade='all, delete-orphan')
-    descriptions = db.relationship('Description', backref='product', lazy=True, cascade='all, delete-orphan')
     
     def to_dict(self, include_relations=False):
         import json
@@ -78,7 +77,6 @@ class Product(db.Model):
         if include_relations:
             result['salts'] = [salt.to_dict() for salt in self.salts]
             result['reviews'] = [review.to_dict() for review in self.reviews]
-            result['descriptions'] = [desc.to_dict() for desc in self.descriptions]
         
         return result
 
@@ -120,22 +118,41 @@ class Review(db.Model):
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
 
-class Description(db.Model):
-    __tablename__ = 'descriptions'
+
+class AppConfig(db.Model):
+    """Store dynamic configuration for the app like trust indicators, disclaimer, etc."""
+    __tablename__ = 'app_config'
     
     id = db.Column(db.String(36), primary_key=True, default=generate_uuid)
-    product_id = db.Column(db.String(36), db.ForeignKey('products.id'), nullable=False)
-    title = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    type = db.Column(db.String(50), nullable=False)  # about, how_it_works, side_effects, faq
+    key = db.Column(db.String(100), unique=True, nullable=False)
+    value = db.Column(db.Text, nullable=False)  # JSON string for complex values
+    type = db.Column(db.String(50), default='string')  # string, json, number, boolean
+    description = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     def to_dict(self):
+        import json
+        value = self.value
+        if self.type == 'json':
+            try:
+                value = json.loads(self.value)
+            except:
+                value = self.value
+        elif self.type == 'number':
+            try:
+                value = float(self.value)
+            except:
+                value = self.value
+        elif self.type == 'boolean':
+            value = self.value.lower() in ('true', '1', 'yes')
+            
         return {
             'id': self.id,
-            'product_id': self.product_id,
-            'title': self.title,
-            'content': self.content,
+            'key': self.key,
+            'value': value,
             'type': self.type,
-            'created_at': self.created_at.isoformat() if self.created_at else None
+            'description': self.description,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }

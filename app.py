@@ -13,7 +13,7 @@ from routes.auth import auth_bp
 from routes.products import products_bp
 from routes.reviews import reviews_bp
 from routes.salts import salts_bp
-from routes.descriptions import descriptions_bp
+from routes.config import config_bp
 
 def create_app(config_name=None):
     app = Flask(__name__)
@@ -55,7 +55,7 @@ def create_app(config_name=None):
                 'products': '/api/products',
                 'reviews': '/api/reviews',
                 'salts': '/api/salts',
-                'description': '/api/description'
+                'config': '/api/config'
             }
         })
     
@@ -64,7 +64,7 @@ def create_app(config_name=None):
     app.register_blueprint(products_bp, url_prefix='/api/products')
     app.register_blueprint(reviews_bp, url_prefix='/api/reviews')
     app.register_blueprint(salts_bp, url_prefix='/api/salts')
-    app.register_blueprint(descriptions_bp, url_prefix='/api/description')
+    app.register_blueprint(config_bp, url_prefix='/api/config')
     
     # Create database tables if they don't exist
     with app.app_context():
@@ -74,4 +74,6 @@ def create_app(config_name=None):
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=True)
+    config_name = os.environ.get('FLASK_CONFIG', 'development')
+    debug_mode = config_name == 'development'
+    app.run(debug=debug_mode, host='0.0.0.0', port=5000, use_reloader=debug_mode)

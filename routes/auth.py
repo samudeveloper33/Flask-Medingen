@@ -63,8 +63,8 @@ def register():
             return jsonify({'error': 'Username already exists'}), 409
         
         # Generate user_id (you can customize this logic)
-        import uuid
-        user_id = f"user_{str(uuid.uuid4())[:8]}"
+        from uuid import uuid4
+        user_id = f"user_{str(uuid4())[:8]}"
         
         # Create new user
         new_user = User(

@@ -12,6 +12,8 @@ def get_products():
     try:
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 20, type=int)
+        # Allow larger per_page values for fetching all products
+        per_page = min(per_page, 1000)  # Cap at 1000 to prevent abuse
         search = request.args.get('search', '')
         brand = request.args.get('brand', '')
         category = request.args.get('category', '')

@@ -28,7 +28,7 @@ class ProductionConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     # Use a separate test database
-    SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://root:root@localhost:3306/medingen_test?charset=utf8mb4'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or f'mysql+pymysql://root:root@localhost:3306/medingen_test?charset=utf8mb4'
 
 config = {
     'development': DevelopmentConfig,
